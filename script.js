@@ -114,7 +114,7 @@ var myStyles = [
 	  color: '#595AB7'},
 ];
 
-3.selectAll('.item')
+d3.selectAll('.item')
   .data(myStyles)
   .style({
   	'color': 'white',
@@ -127,3 +127,58 @@ var myStyles = [
   })
 
 /*----------------------------------------------------------------------------------------------------------------------*/
+
+var myStyles = [
+	{ width: 200,
+	  name: 'Mozart',
+	  color: '#268BD2'},
+	{ width: 220,
+	  name: 'Beethoven',
+	  color: '#BD3613'},
+	{ width: 230,
+	  name: 'Chopin',
+	  color: '#A57706'},
+	{ width: 290,
+	  name: 'Bach',
+	  color: '#2176C7'},
+	{ width: 240,
+	  name: 'Vivaldi',
+	  color: '#595AB7'},
+];
+
+d3.selectAll('#chart')
+  .data(myStyles)
+  .enter().append('div')
+  .classed('item', true)
+  .text(function(d) {
+  	return d.name;
+  })
+  .style({
+  	'color': 'white',
+  	'background': function(d) {
+  		return d.color;
+  	},
+   	'width': function(d) {
+  		return d.width;
+  	}
+  })								// This creates the divs but on running it like this, the divs won't be present in the section with id chart. 
+  									// These created divs will be present at the end of the page after the body closing tag, instead.
+  									// To add these divs to section element, need to add another selectAll() targetting the divs.
+
+
+d3.selectAll('#chart').selectAll('div')				//The second selectAll actually targets the divs which are being created two lines down
+  .data(myStyles)									// Though it might seem that the second selectAll is selecting the divs; it doesn't as
+  .enter().append('div')							// there are no divs yet
+  .classed('item', true)
+  .text(function(d) {
+  	return d.name;
+  })
+  .style({
+  	'color': 'white',
+  	'background': function(d) {
+  		return d.color;
+  	},
+   	'width': function(d) {
+  		return d.width;
+  	}
+  }) 									// 
