@@ -214,27 +214,62 @@
 
 //---------SVG BarChart----------//   
 
-var barData = [20, 30, 45, 15];
+// var barData = [20, 30, 45, 15];
+
+// var height = 400,
+// 	width = 600,
+// 	barWidth = 50,
+// 	barOffset = 5;
+
+// d3.select('#chart').append('svg')
+// 	.attr('height', height)
+// 	.attr('width', width)
+// 	.style('background', '#C9D7D6')
+// 	.selectAll('rect').data(barData)		// this barData is sent to each rect created below; hence each callback function gets it
+// 	.enter().append('rect')
+// 		.style('fill', '#C61C6F')
+// 		.attr('width', barWidth)
+// 		.attr('height', function(d){		// d equals input from barData, one at a time
+// 			return d;
+// 		})
+// 		.attr('x', function(d, i){			// d equals the data from barData array, one at a time and i equals the index of it (automatic)
+// 			return i * (barWidth + barOffset);
+// 		})
+// 		.attr('y', function(d){
+// 			return height - d;				// notice that withouth this, all rect are place at the top end of the chart area, this return changes each ones place
+// 		})
+
+//---------SVG Scales----------//  
+
+//----Quantitative Scales-----//
+
+var bardata = [20, 30, 20, 15, 40];			// The max value in here will fill the height (below) and rest of the values with the percentage of the height accordingly
 
 var height = 400,
-	width = 600,
-	barWidth = 50,
-	barOffset = 5;
+    width = 600,
+    barWidth = 50,
+    barOffset = 5;
+
+var yScale = d3.scaleLinear()				// in v3, it is d3.scale.linear()
+        .domain([0, d3.max(bardata)])		// .domain() takes an input array with minimum and maximum values for the chart
+        .range([0, height])					// .range() also takes an input array with minimum and maximum values.
 
 d3.select('#chart').append('svg')
-	.attr('height', height)
-	.attr('width', width)
-	.style('background', '#C9D7D6')
-	.selectAll('rect').data(barData)		// this barData is sent to each rect created below; hence each callback function gets it
-	.enter().append('rect')
-		.style('fill', '#C61C6F')
-		.attr('width', barWidth)
-		.attr('height', function(d){		// d equals input from barData, one at a time
-			return d;
-		})
-		.attr('x', function(d, i){			// d equals the data from barData array, one at a time and i equals the index of it (automatic)
-			return i * (barWidth + barOffset);
-		})
-		.attr('y', function(d){
-			return height - d;				// notice that withouth this, all rect are place at the top end of the chart area, this return changes each ones place
-		})
+    .attr('width', width)
+    .attr('height', height)
+    .style('background', '#C9D7D6')
+    .selectAll('rect').data(bardata)
+    .enter().append('rect')
+        .style('fill', '#C61C6F')
+        .attr('width', barWidth)
+        .attr('height', function(d) {
+            return yScale(d);
+        })
+        .attr('x', function(d,i) {
+            return i * (barWidth + barOffset);
+        })
+        .attr('y', function(d) {
+            return height - yScale(d);
+        })
+
+//------Ordinal Scales------//
