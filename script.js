@@ -241,18 +241,50 @@
 
 //---------SVG Scales----------//  
 
-//----Quantitative Scales-----//
+//var bardata = [20, 30, 20, 15, 40, 80, 20, 30, 20, 15, 40, 80, 20, 30, 20, 15, 40, 80, 20, 30, 20, 15, 40, 80];			// The max value in here will fill the height (below) and rest of the values with the percentage of the height accordingly
 
-var bardata = [20, 30, 20, 15, 40];			// The max value in here will fill the height (below) and rest of the values with the percentage of the height accordingly
+var bardata = [];
+
+for( var i = 0; i < 100; i++) {
+	bardata.push(Math.random()*30)
+}
 
 var height = 400,
     width = 600,
     barWidth = 50,
     barOffset = 5;
 
+// Colors based on the 'bardata'
+// var colors = d3.scaleLinear()				
+// 		.domain([0, d3.max(bardata)])
+// 		.range(['#FFB832', '#C61C6F'])		// Creates a range of colors starting from the first to the second
+
+// Colors based on the horizontal position
+// var colors = d3.scaleLinear()				
+// 		.domain([0, bardata.length])
+// 		.range(['#FFB832', '#C61C6F'])		// 2 colors' range
+
+// Multiple colors based on horizontal position
+var colors = d3.scaleLinear()				
+		.domain([0, bardata.length*0.33, bardata.length*0.66 ,bardata.length])
+		.range(['#B58929','#C61C6F', '#268BD2', '#85992C'])
+
+// NOTE: domain and range parameters' number should match
+
+// Quantitative Scale
 var yScale = d3.scaleLinear()				// in v3, it is d3.scale.linear()
         .domain([0, d3.max(bardata)])		// .domain() takes an input array with minimum and maximum values for the chart
-        .range([0, height])					// .range() also takes an input array with minimum and maximum values.
+        .range([0, height]);					// .range() also takes an input array with minimum and maximum values.
+
+// Ordinal Scale in v3
+// var xScale = d3.scaleOrdinal()
+// 		.domain(d3.range(0, bardata.length))
+// 		.rangeBands([0, width]);
+
+// Ordinal Scale in v4
+var xScale = d3.scaleBand()
+		.domain(d3.range(0, bardata.length))
+		.range([0, width]);
 
 d3.select('#chart').append('svg')
     .attr('width', width)
@@ -260,16 +292,21 @@ d3.select('#chart').append('svg')
     .style('background', '#C9D7D6')
     .selectAll('rect').data(bardata)
     .enter().append('rect')
-        .style('fill', '#C61C6F')
-        .attr('width', barWidth)
+      //.style('fill', colors) 							// can directly give color code, or use 'color' var (defined above) to have dynamic colors
+        .style('fill', function(d,i) {					// Gives color based on horizontal; it goes from orange(#FFB832) to pink (#C61C6F) - left to right
+        	return colors(i);
+        })
+      //.attr('width', xScale.rangeBand())				// in v3  
+        .attr('width', xScale.bandwidth())				// in v4; can also use xScale.step()
         .attr('height', function(d) {
             return yScale(d);
         })
         .attr('x', function(d,i) {
-            return i * (barWidth + barOffset);
+            return xScale(i);
         })
         .attr('y', function(d) {
             return height - yScale(d);
         })
 
-//------Ordinal Scales------//
+//------d3 Events------//
+
